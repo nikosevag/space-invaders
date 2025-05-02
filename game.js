@@ -18,6 +18,8 @@ const ENEMY_SHOT_INTERVAL = 800; // Base time between enemy shots in ms
 const MIN_ENEMY_SHOT_INTERVAL = 300; // Minimum time between enemy shots in ms
 
 // Game State
+const HIGH_SCORE_KEY = 'spaceInvadersHighScore';
+
 const createGameState = () => ({
   score: 0,
   lives: 3,
@@ -32,6 +34,7 @@ const createGameState = () => ({
   lastEnemyShot: 0,
   enemyShotInterval: ENEMY_SHOT_INTERVAL,
   shields: [],
+  highScore: parseInt(localStorage.getItem(HIGH_SCORE_KEY) || '0'),
 });
 
 // Entity Factory
@@ -225,6 +228,27 @@ const checkCollision = (rect1, rect2) => {
   );
 };
 
+// Function to update UI elements
+const updateUI = (gameState) => {
+  document.getElementById('score').textContent = gameState.score;
+  document.getElementById('lives').textContent = gameState.lives;
+  document.getElementById('highScore').textContent = gameState.highScore;
+};
+
+// Function to end the game
+const endGame = (gameState) => {
+  gameState.gameOver = true;
+  document.getElementById('gameOver').classList.remove('hidden');
+  document.getElementById('finalScore').textContent = gameState.score;
+
+  if (gameState.score > gameState.highScore) {
+    gameState.highScore = gameState.score;
+    localStorage.setItem(HIGH_SCORE_KEY, gameState.highScore);
+  }
+  document.getElementById('gameOverHighScore').textContent =
+    gameState.highScore;
+};
+
 // Game Initialization
 const initGame = () => {
   const canvas = document.getElementById('gameCanvas');
@@ -233,6 +257,7 @@ const initGame = () => {
   canvas.height = GAME_HEIGHT;
 
   let gameState = createGameState();
+  updateUI(gameState); // Initialize UI with high score
   gameState.player = new Player(GAME_WIDTH / 2 - 25, GAME_HEIGHT - 40);
 
   // Initialize enemies
@@ -266,7 +291,10 @@ const initGame = () => {
   });
 
   document.getElementById('restartButton').addEventListener('click', () => {
+    const currentHighScore = gameState.highScore; // Preserve high score
     gameState = createGameState();
+    gameState.highScore = currentHighScore; // Restore high score
+    updateUI(gameState); // Update UI after reset
     gameState.player = new Player(GAME_WIDTH / 2 - 25, GAME_HEIGHT - 40);
 
     // Reinitialize enemies
@@ -364,7 +392,7 @@ const initGame = () => {
           gameState.bullets.splice(bulletIndex, 1);
           gameState.enemies.splice(enemyIndex, 1);
           gameState.score += enemy.points;
-          document.getElementById('score').textContent = gameState.score;
+          updateUI(gameState); // Update UI with score
         }
       });
     });
@@ -394,12 +422,10 @@ const initGame = () => {
       ) {
         gameState.enemyBullets.splice(bulletIndex, 1);
         gameState.lives--;
-        document.getElementById('lives').textContent = gameState.lives;
+        updateUI(gameState); // Update UI with lives
 
         if (gameState.lives <= 0) {
-          gameState.gameOver = true;
-          document.getElementById('gameOver').classList.remove('hidden');
-          document.getElementById('finalScore').textContent = gameState.score;
+          endGame(gameState);
         } else {
           gameState.player.isInvulnerable = true;
           gameState.player.invulnerableTimer = timestamp;
@@ -413,16 +439,12 @@ const initGame = () => {
         (enemy) => enemy.y + enemy.height >= GAME_HEIGHT - 40
       )
     ) {
-      gameState.gameOver = true;
-      document.getElementById('gameOver').classList.remove('hidden');
-      document.getElementById('finalScore').textContent = gameState.score;
+      endGame(gameState);
     }
 
     // Check if all enemies are destroyed
     if (gameState.enemies.length === 0) {
-      gameState.gameOver = true;
-      document.getElementById('gameOver').classList.remove('hidden');
-      document.getElementById('finalScore').textContent = gameState.score;
+      endGame(gameState);
     }
 
     // Draw everything

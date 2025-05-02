@@ -35,6 +35,10 @@ body {
   font-size: 1.2rem;
 }
 
+.high-score {
+  font-size: 1.2rem;
+}
+
 .game-over {
   position: absolute;
   top: 50%;
@@ -45,6 +49,10 @@ body {
   border-radius: 8px;
   text-align: center;
   border: 2px solid #333;
+}
+
+.game-over p {
+  margin-top: 0.5rem;
 }
 
 .hidden {

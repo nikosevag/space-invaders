@@ -11,6 +11,7 @@ A classic Space Invaders game built with HTML5 Canvas and vanilla JavaScript. Th
 - **Shield System**: Three protective shields that can be destroyed
 - **Scoring System**: Different point values based on enemy type
 - **Lives System**: Three lives with invulnerability period after being hit
+- **High Score System**: Persists the highest score using `localStorage`
 
 ### Enemy Types
 
@@ -36,6 +37,11 @@ A classic Space Invaders game built with HTML5 Canvas and vanilla JavaScript. Th
   - Green: Full health (3)
   - Yellow: Medium health (2)
   - Red: Low health (1)
+
+### High Score
+
+- Displays the current high score during gameplay and on the game over screen
+- Automatically saves the highest score achieved across sessions
 
 ## How to Play
 
@@ -79,7 +85,7 @@ A classic Space Invaders game built with HTML5 Canvas and vanilla JavaScript. Th
 - Enemy grid with different types and behaviors
 - Shield system with health management
 - Collision detection system
-- Score and lives tracking
+- Score, lives, and high score tracking
 - Game over and restart functionality
 
 ### Performance Optimizations
@@ -133,7 +139,7 @@ This game is built using only native web technologies without any external libra
 
 ## Future Improvements
 
-- [ ] 🏆 High score system
+- [x] 🏆 High score system
 - [ ] ⚡ Power-ups and special abilities
 - [ ] 👾 Different enemy attack patterns
 - [ ] 🔊 Sound effects and background music
